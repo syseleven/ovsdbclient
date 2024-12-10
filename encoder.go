@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ovsdb
+package ovsdbclient
 
 import (
 	"bytes"
 	"fmt"
-	//"github.com/davecgh/go-spew/spew"
 	"io"
 	"strconv"
 	"sync"

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ovsdb
+package ovsdbclient
 
 // OvsBridge represents an OVS bridge. The data help by the data
 // structure is the same as the output of `ovs-vsctl list Bridge`

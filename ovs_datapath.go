@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ovsdb
+package ovsdbclient
 
 // OvsDatapath represents an OVS datapath. A datapath is a collection
 // of the ports attached to bridges. Each datapath also has associated

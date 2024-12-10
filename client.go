@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package ovsdb implements OVSDB (JSON-RPC 1.0) Client
+// Package ovsdbclient implements OVSDB (JSON-RPC 1.0) Client
 // per RFC 7047.
-package ovsdb
+package ovsdbclient
 
 import (
 	"encoding/json"
 	"fmt"
-	//"github.com/davecgh/go-spew/spew"
 	"io"
-	//"math/rand"
 	"net"
 	"net/rpc"
 	"reflect"
