@@ -39,10 +39,8 @@ coverage:
 	@go tool cover -html=.coverage/coverage.out -o .coverage/coverage.html
 
 docs:
-	@mkdir -p .doc
-	@godoc -html github.com/Dmitry-Eremeev/ovsdbclient > .doc/index.html
 	@echo "Run to serve docs:"
-	@echo "    godoc -goroot .doc/ -html -http \":5000\""
+	@godoc -http 127.0.0.1:5000
 
 clean:
 	@rm -rf .doc
@@ -54,6 +52,7 @@ dep:
 	@go install github.com/kyoh86/richgo@latest
 	@go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 	@go install github.com/greenpau/versioned/cmd/versioned@latest
+	@go install golang.org/x/tools/cmd/godoc@latest
 
 ovs:
 	@ovs-vsctl add-br vbr0 || true
