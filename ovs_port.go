@@ -14,6 +14,10 @@
 
 package ovsdbclient
 
+import (
+	"fmt"
+)
+
 // OvsPort represents an OVS bridge. The data help by the data
 // structure is the same as the output of `ovs-vsctl list Port`
 // command.
@@ -41,4 +45,61 @@ type OvsPort struct {
 	Tag             []string           // TODO: unverified data type
 	Trunks          []string           // TODO: unverified data type
 	VlanMode        []string           // TODO: unverified data type
+}
+
+// GetDbPorts returns a list of ports from the Port table of OVS database.
+func (cli *OvsClient) GetDbPorts() ([]*OvsPort, error) {
+	ports := []*OvsPort{}
+	query := "SELECT * FROM Port"
+	result, error := cli.Database.Vswitch.Client.Transact(cli.Database.Vswitch.Name, query)
+	if error != nil {
+		return nil, fmt.Errorf("the '%s' query failed: %s", query, error)
+	}
+	if len(result.Rows) == 0 {
+		return nil, fmt.Errorf("the '%s' query did not return any rows", query)
+	}
+	for _, row := range result.Rows {
+		port := &OvsPort{}
+		data, dataType, error := row.GetColumnValue("_uuid", result.Columns)
+		if error != nil {
+			return nil, fmt.Errorf("couldn't get port '_uuid': %s", error)
+		}
+		if dataType != "string" {
+			return nil, fmt.Errorf("port '_uuid' is not string")
+		}
+		port.UUID = data.(string)
+
+		if data, dataType, error := row.GetColumnValue("name", result.Columns); error == nil {
+			if dataType == "string" {
+				port.Name = data.(string)
+			} else {
+				return nil, fmt.Errorf("'name' of port %s is not string", port.UUID)
+			}
+		}
+		if data, dataType, error := row.GetColumnValue("interfaces", result.Columns); error == nil {
+			if dataType == "[]string" {
+				port.Interfaces = data.([]string)
+			} else if dataType == "string" {
+				port.Interfaces = append(port.Interfaces, data.(string))
+			} else {
+				return nil, fmt.Errorf("'interfaces' of port %s is not array of strings and not string", port.UUID)
+			}
+		}
+		ports = append(ports, port)
+	}
+	return ports, nil
+
+}
+
+// GetAllPortsToInterfaces returns map of all ports, where every port uuid has its all interfaces
+func (cli *OvsClient) GetAllPortsToInterfaces() (map[string][]string, error) {
+	ports, error := cli.GetDbPorts()
+	if error != nil {
+		return nil, fmt.Errorf("couldn't get list of ports: %s", error)
+	}
+	allPortsToInterfaces := make(map[string][]string)
+	for _, port := range ports {
+		allPortsToInterfaces[port.UUID] = port.Interfaces
+	}
+	return allPortsToInterfaces, nil
 }

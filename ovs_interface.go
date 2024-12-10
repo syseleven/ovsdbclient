@@ -66,14 +66,19 @@ type OvsInterface struct {
 
 // GetDbInterfaces returns a list of interfaces from the Interface table of OVS database.
 func (cli *OvsClient) GetDbInterfaces() ([]*OvsInterface, error) {
+	allInterfacesToBridges, error := cli.GetAllInterfacesToBridges()
+
+	if error != nil {
+		return nil, fmt.Errorf("couldn't get bridges and their interfaces: %s", error)
+	}
 	intfs := []*OvsInterface{}
 	query := "SELECT * FROM Interface"
 	result, err := cli.Database.Vswitch.Client.Transact(cli.Database.Vswitch.Name, query)
 	if err != nil {
-		return intfs, fmt.Errorf("The '%s' query failed: %s", query, err)
+		return intfs, fmt.Errorf("the '%s' query failed: %s", query, err)
 	}
 	if len(result.Rows) == 0 {
-		return intfs, fmt.Errorf("The '%s' query did not return any rows", query)
+		return intfs, fmt.Errorf("the '%s' query did not return any rows", query)
 	}
 	for _, row := range result.Rows {
 		intf := &OvsInterface{}
@@ -85,6 +90,8 @@ func (cli *OvsClient) GetDbInterfaces() ([]*OvsInterface, error) {
 			}
 			intf.UUID = r.(string)
 		}
+
+		intf.BridgeName = allInterfacesToBridges[intf.UUID]
 
 		if r, dt, err := row.GetColumnValue("name", result.Columns); err == nil {
 			if dt == "string" {
