@@ -62,13 +62,11 @@ ovs:
 	@sudo chmod o+rw /var/run/openvswitch/db.sock
 
 qtest:
-	@#go test -v -run TestListDatabasesMethod
-	@#go test -v -run TestNewClient
 	@go test -v -run TestOvsTunnelStringParse
 	@go test -v -run TestOvsFlowStringParse
-
-license:
-	@addlicense -c "Paul Greenberg greenpau@outlook.com" -y 2020 *.go
+	@go test -v -run TestConditionParse
+	@go test -v -run TestOvnClientUpdateRefs
+	@go test -v -run TestOvsClientUpdateRefs
 
 release: license
 	@echo "Making release"
