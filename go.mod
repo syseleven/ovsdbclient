@@ -1,3 +1,3 @@
-module github.com/Dmitry-Eremeev/ovsdbclient
+module github.com/syseleven/ovsdbclient
 
 go 1.20
