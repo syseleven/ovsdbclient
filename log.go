@@ -152,6 +152,13 @@ func (cli *OvsClient) GetLogFileEventStats(name string) (map[string]map[string]u
 		}
 		cli.Service.Vswitchd.File.Log.Reader.Offset = offset
 		return stats, nil
+	case "ovn-controller":
+		stats, offset, err := readLogFile(cli.Service.OvnController.File.Log)
+		if err != nil {
+			return stats, err
+		}
+		cli.Service.OvnController.File.Log.Reader.Offset = offset
+		return stats, nil
 	}
 	return nil, fmt.Errorf("The '%s' component is unsupported", name)
 }
@@ -220,6 +227,13 @@ func (cli *OvsClient) GetLogFileInfo(name string) (OvsDataFile, error) {
 			cli.Service.Vswitchd.File.Log.Info = i
 			cli.Service.Vswitchd.File.Log.Component = name
 			return cli.Service.Vswitchd.File.Log, nil
+		}
+	case "ovn-controller":
+		i, err = os.Stat(cli.Service.OvnController.File.Log.Path)
+		if err == nil {
+			cli.Service.OvnController.File.Log.Info = i
+			cli.Service.OvnController.File.Log.Component = name
+			return cli.Service.OvnController.File.Log, nil
 		}
 	default:
 		return OvsDataFile{}, fmt.Errorf("The '%s' component is unsupported", name)

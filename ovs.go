@@ -30,11 +30,12 @@ type OvsClient struct {
 	}
 	Timeout int
 	System  struct {
-		ID       string
-		RunDir   string
-		Hostname string
-		Type     string
-		Version  string
+		ID        string
+		RunDir    string
+		RunDirOvn string
+		Hostname  string
+		Type      string
+		Version   string
 	}
 }
 
@@ -45,6 +46,7 @@ func NewOvsClient() *OvsClient {
 
 	cli.System.ID = "unknown"
 	cli.System.RunDir = "/var/run/openvswitch"
+	cli.System.RunDirOvn = "/var/run/ovn"
 	cli.System.Hostname = "localhost"
 	cli.System.Type = "unknown"
 	cli.System.Version = "unknown"
@@ -104,5 +106,5 @@ func (cli *OvsClient) Close() {
 func (cli *OvsClient) updateRefs() {
 	cli.Database.Vswitch.Socket.Control = fmt.Sprintf("unix:%s/ovsdb-server.%d.ctl", cli.System.RunDir, cli.Database.Vswitch.Process.ID)
 	cli.Service.Vswitchd.Socket.Control = fmt.Sprintf("unix:%s/ovs-vswitchd.%d.ctl", cli.System.RunDir, cli.Service.Vswitchd.Process.ID)
-	cli.Service.OvnController.Socket.Control = fmt.Sprintf("unix:%s/ovn-controller.%d.ctl", cli.System.RunDir, cli.Service.OvnController.Process.ID)
+	cli.Service.OvnController.Socket.Control = fmt.Sprintf("unix:%s/ovn-controller.%d.ctl", cli.System.RunDirOvn, cli.Service.OvnController.Process.ID)
 }

@@ -97,6 +97,8 @@ func (cli *OvsClient) GetAppCoverageMetrics(db string) (map[string]map[string]fl
 		return getAppCoverageMetrics(db, cli.Database.Vswitch.Socket.Control, cli.Timeout)
 	case "vswitchd-service":
 		return getAppCoverageMetrics(db, cli.Service.Vswitchd.Socket.Control, cli.Timeout)
+	case "ovncontroller-service":
+		return getAppCoverageMetrics(db, cli.Service.OvnController.Socket.Control, cli.Timeout)
 	default:
 		return nil, fmt.Errorf("The '%s' database is unsupported for '%s'", db, cmd)
 	}

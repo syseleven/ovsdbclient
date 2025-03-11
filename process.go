@@ -161,6 +161,8 @@ func (cli *OvsClient) GetProcessInfo(name string) (OvsProcess, error) {
 		p, err = getProcessInfoFromFile(cli.Database.Vswitch.File.Pid.Path)
 	case "ovs-vswitchd":
 		p, err = getProcessInfoFromFile(cli.Service.Vswitchd.File.Pid.Path)
+	case "ovn-controller":
+		p, err = getProcessInfoFromFile(cli.Service.OvnController.File.Pid.Path)
 	default:
 		return OvsProcess{}, fmt.Errorf("The '%s' component is unsupported", name)
 	}
@@ -172,6 +174,8 @@ func (cli *OvsClient) GetProcessInfo(name string) (OvsProcess, error) {
 		cli.Database.Vswitch.Process = p
 	case "ovs-vswitchd":
 		cli.Service.Vswitchd.Process = p
+	case "ovn-controller":
+		cli.Service.OvnController.Process = p
 	}
 	return p, nil
 }
